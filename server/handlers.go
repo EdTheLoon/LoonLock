@@ -1,6 +1,21 @@
 package server
 
-import "net/http"
+import (
+	"fmt"
+	"loonlock/lock"
+	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
+)
+
+func (s *server) homeHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (s *server) loginHandler(w http.ResponseWriter, r *http.Request) {
+
+}
 
 func (s *server) admin(w http.ResponseWriter, r *http.Request) {
 
@@ -22,13 +37,34 @@ func (s *server) deleteKey(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) adminOnly(h http.HandlerFunc) http.HandlerFunc {
+func (s *server) unlockDoor(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (s *server) unlockDoorTemp(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	timeStr := vars["time"]
+	time, err := strconv.Atoi(timeStr)
+	if err != nil {
+		// Handle an error (the 'time' is not a number)
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("Unlock for '" + timeStr + "' seconds")
+	lock.UnlockTemp(time)
+}
+
+func (s *server) lockDoor(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (s *server) adminOnly(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// if !currentUser(r).IsAdmin {
 		if 0 != 0 {
-			http.NotFound(w, r)
+			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
-		h(w, r)
+		next.ServeHTTP(w, r)
 	}
 }

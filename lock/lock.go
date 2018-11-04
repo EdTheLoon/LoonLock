@@ -10,7 +10,7 @@ func Lock() {
 	// TO DO
 }
 
-// UnlockTemp unlocks the door for a period of time and then locks it again
+// UnlockTemp unlocks the door for a period of time (in seconds) and then locks it again
 func UnlockTemp(duration int) {
 	Unlock()
 	// TO DO: WAIT for <duration>
