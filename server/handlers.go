@@ -12,7 +12,7 @@ import (
 func (s *server) viewHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	load := vars["page"] + ".html"
-	if load == "" {
+	if load == ".html" {
 		load = "home.html"
 	}
 	p, err := s.loadPage(load)
