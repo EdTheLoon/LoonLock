@@ -1,18 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"loonlock/server"
 	"net/http"
 )
 
 func main() {
 	// Create a new server
-	webserver := server.NewServer("./keys/", "./assets")
+	s := server.NewServer("./keys/", "./assets", "server.log")
+	defer s.CloseLog()
 
 	// Start the web server and listen on port 8080
-	fmt.Println("Starting server on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", webserver.GetRouter()); err != nil {
+	s.Log("Server started on http://localhost:8080")
+	if err := http.ListenAndServe(":8080", s.GetRouter()); err != nil {
 		panic(err)
 	}
 }

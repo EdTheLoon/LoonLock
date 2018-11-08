@@ -16,7 +16,7 @@ func (s *server) viewHandler(w http.ResponseWriter, r *http.Request) {
 		load = "home.html"
 	}
 	p, err := s.loadPage(load)
-	fmt.Println("Loading page: ./assets/" + load)
+	s.Log("Loading page: ./assets/" + load)
 	if err != nil {
 		http.Error(w, "Page not found", http.StatusNotFound)
 		return

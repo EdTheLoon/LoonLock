@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -16,15 +17,21 @@ type server struct {
 	assets string
 	router *mux.Router
 	fs     http.Handler
+	log    *os.File
 }
 
 // NewServer creates a new server
-func NewServer(keydir string, assets string) server {
+func NewServer(keydir string, assets string, log string) server {
+	f, err := os.OpenFile(log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
 	s := server{
 		keydir,
 		assets,
 		mux.NewRouter(),
 		http.FileServer(http.Dir(assets)),
+		f,
 	}
 	s.routes()
 	return s
