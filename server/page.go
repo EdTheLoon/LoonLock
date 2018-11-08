@@ -5,6 +5,6 @@ import (
 )
 
 func (s *server) loadPage(p string) ([]byte, error) {
-	page, err := ioutil.ReadFile("/assets/html/" + p + ".html")
+	page, err := ioutil.ReadFile("./assets/html/" + p)
 	return page, err
 }

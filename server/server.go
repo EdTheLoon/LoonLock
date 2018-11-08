@@ -19,14 +19,14 @@ type server struct {
 }
 
 // NewServer creates a new server
-func NewServer(kd string, ass string) server {
+func NewServer(keydir string, assets string) server {
 	s := server{
-		kd,
-		ass,
+		keydir,
+		assets,
 		mux.NewRouter(),
-		http.FileServer(http.Dir("./assets")),
+		http.FileServer(http.Dir(assets)),
 	}
-
+	s.routes()
 	return s
 }
 

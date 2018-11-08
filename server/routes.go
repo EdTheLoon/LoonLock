@@ -3,10 +3,12 @@ package server
 import "net/http"
 
 func (s *server) routes() {
-
+	// Serves static asset files through a fileserver
 	s.router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", s.fs))
 
 	// Web Interface handling
+	s.router.HandleFunc("/", s.viewHandler)
+	s.router.HandleFunc("/web/", s.viewHandler)
 	s.router.HandleFunc("/web/{page}", s.viewHandler)                       // Handles showing all front end HTML pages
 	s.router.HandleFunc("/keys/{id}", s.adminOnly(s.getKey)).Methods("GET") // modifykey.html
 
