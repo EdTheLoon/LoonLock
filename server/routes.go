@@ -7,10 +7,7 @@ func (s *server) routes() {
 	s.router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", s.fs))
 
 	// Web Interface handling
-	s.router.HandleFunc("/", s.homeHandler)                                 // index.html
-	s.router.HandleFunc("/login", s.showLogin)                              // login.html
-	s.router.HandleFunc("/keys", s.adminOnly(s.getAllKeys))                 // keys.html
-	s.router.HandleFunc("/keys/add", s.adminOnly(s.showAddKey))             // addkey.html
+	s.router.HandleFunc("/web/{page}", s.viewHandler)                       // Handles showing all front end HTML pages
 	s.router.HandleFunc("/keys/{id}", s.adminOnly(s.getKey)).Methods("GET") // modifykey.html
 
 	// Handles logging in or out

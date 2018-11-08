@@ -9,8 +9,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (s *server) homeHandler(w http.ResponseWriter, r *http.Request) {
-
+func (s *server) viewHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	load := vars["page"]
+	p, err := s.loadPage(load)
+	if err != nil {
+		http.Error(w, "Page not found", http.StatusNotFound)
+		return
+	}
+	w.Write(p)
 }
 
 func (s *server) loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,14 +25,6 @@ func (s *server) loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) admin(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func (s *server) showLogin(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func (s *server) showAddKey(w http.ResponseWriter, r *http.Request) {
 
 }
 
