@@ -6,19 +6,22 @@ func (s *server) routes() {
 
 	s.router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", s.fs))
 
-	// Home handler - displays a login page
-	s.router.HandleFunc("/", s.homeHandler)
+	// Web Interface handling
+	s.router.HandleFunc("/", s.homeHandler)                                 // index.html
+	s.router.HandleFunc("/login", s.showLogin)                              // login.html
+	s.router.HandleFunc("/keys", s.adminOnly(s.getAllKeys))                 // keys.html
+	s.router.HandleFunc("/keys/add", s.adminOnly(s.showAddKey))             // addkey.html
+	s.router.HandleFunc("/keys/{id}", s.adminOnly(s.getKey)).Methods("GET") // modifykey.html
 
 	// Handles logging in or out
-	s.router.HandleFunc("login", s.loginHandler).Methods("POST")
+	s.router.HandleFunc("/login", s.loginHandler).Methods("POST")
 
 	// Admin page handler
 	s.router.HandleFunc("/admin", s.adminOnly(s.admin))
 
 	// Key Handlers
-	s.router.HandleFunc("/keys/add/{id}", s.adminOnly(s.addKey))
-	s.router.HandleFunc("/keys/delete/{id}", s.adminOnly(s.deleteKey))
-	s.router.HandleFunc("/keys/{id}", s.adminOnly(s.getKey)).Methods("GET")
+	s.router.HandleFunc("/keys/add/{id}", s.adminOnly(s.addKey)).Methods("POST") // When key is added in addkey.html
+	s.router.HandleFunc("/keys/delete/{id}", s.adminOnly(s.deleteKey))           // when 'delete' is clicked on keys.html or modifykeys.html
 
 	// Door lock handlers
 	s.router.HandleFunc("/door/lock", s.adminOnly(s.lockDoor))
