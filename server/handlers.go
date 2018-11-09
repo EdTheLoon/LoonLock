@@ -33,7 +33,24 @@ func (s *server) admin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
+	// Read the data submitted through the form
+	name := r.PostForm.Get("name")
+	description := r.PostForm.Get("description")
+	expires := r.PostForm.Get("expires")
+	singleUse, err := strconv.ParseBool(r.PostForm.Get("singleUse"))
+	if err != nil {
+		http.Error(w, "Could not convert string to boolean:\n"+err.Error(), http.StatusSeeOther)
+		return
+	}
 
+	// Create the key using the provided data
+	key, err := createKey(name, description, expires, singleUse)
+	if err != nil {
+		http.Error(w, "Could not create key::\n"+err.Error(), http.StatusSeeOther)
+	}
+
+	// Write the key to file
+	writeKey(&key)
 }
 
 func (s *server) getKey(w http.ResponseWriter, r *http.Request) {
