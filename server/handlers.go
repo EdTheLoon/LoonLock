@@ -110,13 +110,7 @@ func (s *server) lockDoor(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) adminOnly(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// if !currentUser(r).IsAdmin {
-		r.ParseForm()
-
-		// DEBUG CODE
-		for _k, _v := range r.Form {
-			fmt.Printf("%s = %s\n", _k, _v)
-		}
+		// TO DO: IMPLEMENT PROPER AUTHORISATION CHECKING
 		if 0 != 0 { // CHANGE THIS
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
