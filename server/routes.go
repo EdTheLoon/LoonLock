@@ -19,8 +19,8 @@ func (s *server) routes() {
 	s.router.HandleFunc("/admin", s.adminOnly(s.admin))
 
 	// Key Handlers
-	s.router.HandleFunc("/keys/add/{id}", s.adminOnly(s.addKey)).Methods("POST") // When key is added in addkey.html
-	s.router.HandleFunc("/keys/delete/{id}", s.adminOnly(s.deleteKey))           // when 'delete' is clicked on keys.html or modifykeys.html
+	s.router.HandleFunc("/keys/add", s.adminOnly(s.addKey)).Methods("POST") // When key is added in addkey.html
+	s.router.HandleFunc("/keys/delete/{id}", s.adminOnly(s.deleteKey))      // when 'delete' is clicked on keys.html or modifykeys.html
 
 	// Door lock handlers
 	s.router.HandleFunc("/door/lock", s.adminOnly(s.lockDoor))
