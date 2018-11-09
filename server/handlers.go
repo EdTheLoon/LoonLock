@@ -38,9 +38,9 @@ func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	// DEBUG CODE - Comment out when not needed
-	for _k, _v := range r.Form {
-		fmt.Printf("%s = %s\n", _k, _v)
-	}
+	// for _k, _v := range r.Form {
+	// 	fmt.Printf("%s = %s\n", _k, _v)
+	// }
 
 	name := r.FormValue("name")
 	description := r.FormValue("description")
