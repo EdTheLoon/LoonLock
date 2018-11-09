@@ -55,7 +55,8 @@ func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
 	// Create the key using the provided data
 	key, err := createKey(name, description, expires, singleUse)
 	if err != nil {
-		http.Error(w, "Could not create key::\n"+err.Error(), http.StatusSeeOther)
+		http.Error(w, "Could not create key:\n"+err.Error(), http.StatusSeeOther)
+		s.Log("Could not create key: " + err.Error())
 		return
 	}
 
@@ -64,6 +65,7 @@ func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
 	err = s.writeKey(&key)
 	if err != nil {
 		http.Error(w, "Could not write key:\n"+err.Error(), http.StatusSeeOther)
+		s.Log("Could not write key: " + err.Error())
 		return
 	}
 	s.Log("Key written successfully!")

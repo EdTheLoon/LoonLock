@@ -22,10 +22,13 @@ type server struct {
 
 // NewServer creates a new server
 func NewServer(keydir string, assets string, log string) server {
-	f, err := os.OpenFile(log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	// Create/open the log file
+	f, err := os.OpenFile(log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0640)
 	if err != nil {
 		panic(err)
 	}
+
+	// Create the server struct
 	s := server{
 		keydir,
 		assets,
@@ -33,6 +36,15 @@ func NewServer(keydir string, assets string, log string) server {
 		http.FileServer(http.Dir(assets)),
 		f,
 	}
+
+	// Create the keys directory if it does not exist
+	_, err = os.Stat(s.keyDir)
+	if err != nil {
+		os.MkdirAll(s.keyDir, 0700)
+		s.Log("Created keys directory: " + s.keyDir)
+	}
+
+	// Initiate the routes
 	s.routes()
 	return s
 }

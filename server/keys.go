@@ -53,7 +53,7 @@ func (s *server) writeKey(k *Key) error {
 	lastUsed := k.lastUsed
 
 	// Create the file for working
-	f, err := os.OpenFile(s.keyDir+id, os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(s.keyDir+id, os.O_CREATE|os.O_WRONLY, 0640)
 	if err != nil {
 		return err
 	}
