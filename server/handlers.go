@@ -49,8 +49,6 @@ func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
 	singleUse := false
 	if singleUseStr == "on" {
 		singleUse = true
-	} else {
-		singleUse = false
 	}
 
 	s.Log("Creating key...")
