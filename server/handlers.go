@@ -33,24 +33,48 @@ func (s *server) admin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
+	s.Log("Received 'addkey' form")
 	// Read the data submitted through the form
-	name := r.PostForm.Get("name")
-	description := r.PostForm.Get("description")
-	expires := r.PostForm.Get("expires")
-	singleUse, err := strconv.ParseBool(r.PostForm.Get("singleUse"))
-	if err != nil {
-		http.Error(w, "Could not convert string to boolean:\n"+err.Error(), http.StatusSeeOther)
-		return
+	r.ParseForm()
+
+	// DEBUG CODE - Comment out when not needed
+	for _k, _v := range r.Form {
+		fmt.Printf("%s = %s\n", _k, _v)
 	}
 
+	name := r.FormValue("name")
+	description := r.FormValue("description")
+	expires := r.FormValue("expires")
+	singleUseStr := r.FormValue("singleUse")
+	singleUse := false
+	if singleUseStr == "on" {
+		singleUse = true
+	} else {
+		singleUse = false
+	}
+
+	s.Log("Creating key...")
 	// Create the key using the provided data
 	key, err := createKey(name, description, expires, singleUse)
 	if err != nil {
 		http.Error(w, "Could not create key::\n"+err.Error(), http.StatusSeeOther)
+		return
 	}
 
 	// Write the key to file
-	writeKey(&key)
+	s.Log("Writing key...")
+	err = s.writeKey(&key)
+	if err != nil {
+		http.Error(w, "Could not write key:\n"+err.Error(), http.StatusSeeOther)
+		return
+	}
+	s.Log("Key written successfully!")
+	_, _ = w.Write([]byte("Success!\nKey added successfully!\n\n"))
+	for _k, _v := range r.Form {
+		str := fmt.Sprintf("%s = %s\n", _k, _v)
+		w.Write([]byte(str))
+	}
+
 }
 
 func (s *server) getKey(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +117,13 @@ func (s *server) lockDoor(w http.ResponseWriter, r *http.Request) {
 func (s *server) adminOnly(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// if !currentUser(r).IsAdmin {
-		if 0 != 0 {
+		r.ParseForm()
+
+		// DEBUG CODE
+		for _k, _v := range r.Form {
+			fmt.Printf("%s = %s\n", _k, _v)
+		}
+		if 0 != 0 { // CHANGE THIS
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}

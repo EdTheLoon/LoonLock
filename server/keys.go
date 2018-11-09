@@ -42,7 +42,7 @@ func createKey(n string, d string, exp string, single bool) (Key, error) {
 	return key, nil
 }
 
-func writeKey(k *Key) error {
+func (s *server) writeKey(k *Key) error {
 	id := k.id.String()
 	name := k.name
 	description := k.description
@@ -53,20 +53,21 @@ func writeKey(k *Key) error {
 	lastUsed := k.lastUsed
 
 	// Create the file for working
-	f, err := os.OpenFile(id, os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(s.keyDir+id, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
 
 	// Parse everything into a string
 	parsed := id + "\n" + name + "\n" + description + "\n" + created + "\n" + expires + "\n" + singleUse + "\n" +
-		uses + "\n" + lastUsed
+		uses + "\n" + lastUsed + "\n"
 
 	// Write to the file
-	_, err = f.WriteString(parsed)
+	n, err := f.WriteString(parsed)
 	if err != nil {
 		return err
 	}
+	s.Log(strconv.Itoa(n) + " bytes written.")
 
 	// Return nil if no error has been encountered
 	return nil
