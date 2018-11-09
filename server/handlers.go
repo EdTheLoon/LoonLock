@@ -67,11 +67,7 @@ func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.Log("Key written successfully!")
-	_, _ = w.Write([]byte("Success!\nKey added successfully!\n\n"))
-	for _k, _v := range r.Form {
-		str := fmt.Sprintf("%s = %s\n", _k, _v)
-		w.Write([]byte(str))
-	}
+	_, _ = w.Write([]byte("Success!\nKey added successfully!"))
 
 }
 
