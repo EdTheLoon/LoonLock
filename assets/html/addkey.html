@@ -6,10 +6,46 @@
     <link href="/static/icons/material-icons.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>LoonLock - Add a new key</title>
 </head>
 <body>
-    
+    <form action="/keys/add" method="POST">
+        <div class="row">
+            <div class="input-field">
+                <input placeholder="Name of Key Holder" id="name" name="name" type="text" class="validate">
+                <label for="name">Name</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field">
+                <input placeholder="Brief description of key" id="description" name="description" type="text" class="validate">
+                <label for="description">Description</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field">
+                <input type="text" class="datepicker" name="expires" id="expires">
+                <label for="expires">Expiry Date</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="switch">
+                <label>
+                    Unlimited use
+                    <input type="checkbox" id="singleUse" name="singleUse">
+                    <span class="lever"></span>
+                    Use once
+                </label>
+            </div>
+        </div>
+        <button class="btn waves-effect waves-light" type="submit"> 
+            Create Key
+            <i class="material-icons right">send</i>
+        </button>
+    </form>
     <script type="text/javascript" src="/static/js/materialize.js"></script>
+    <script type="text/javascript">
+        M.AutoInit();
+    </script>
 </body>
 </html>
