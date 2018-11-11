@@ -2,7 +2,7 @@ package server
 
 import "net/http"
 
-func (s *server) routes() {
+func (s *Server) routes() {
 	// Serves static asset files through a fileserver
 	s.router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", s.fs))
 

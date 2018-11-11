@@ -6,7 +6,7 @@ import (
 )
 
 // Log a message to console and log file
-func (s *server) Log(msg string) {
+func (s *Server) Log(msg string) {
 	newMsg := "[" + time.Now().Format(time.UnixDate) + "] " + msg
 	// Print to console
 	fmt.Println(newMsg)
@@ -14,6 +14,7 @@ func (s *server) Log(msg string) {
 	s.log.WriteString(newMsg + "\n")
 }
 
-func (s *server) CloseLog() {
+// CloseLog closes the log file
+func (s *Server) CloseLog() {
 	s.log.Close()
 }

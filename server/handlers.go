@@ -5,11 +5,12 @@ import (
 	"loonlock/lock"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
-func (s *server) viewHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) viewHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	load := vars["page"] + ".html"
 	if load == ".html" {
@@ -24,15 +25,15 @@ func (s *server) viewHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(p)
 }
 
-func (s *server) loginHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) admin(w http.ResponseWriter, r *http.Request) {
+func (s *Server) admin(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
+func (s *Server) addKey(w http.ResponseWriter, r *http.Request) {
 	s.Log("Received 'addkey' form")
 	// Read the data submitted through the form
 	r.ParseForm()
@@ -46,6 +47,20 @@ func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
 	description := r.FormValue("description")
 	expires := r.FormValue("expires")
 	singleUseStr := r.FormValue("singleUse")
+
+	// Parse expiry input
+	var err error
+	expiresFormatted := time.Date(2150, 12, 31, 23, 59, 59, 999, time.Local)
+	if expires != "" {
+		expiresFormatted, err = time.Parse("", expires)
+		if err != nil {
+			http.Error(w, "Could not parse the time into the correct format:\n"+err.Error(), http.StatusSeeOther)
+			s.Log("Could not parse the time:\n" + err.Error())
+			return
+		}
+	}
+
+	// Parse single use
 	singleUse := false
 	if singleUseStr == "on" {
 		singleUse = true
@@ -53,7 +68,7 @@ func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
 
 	s.Log("Creating key...")
 	// Create the key using the provided data
-	key, err := createKey(name, description, expires, singleUse)
+	key, err := createKey(name, description, expiresFormatted, singleUse)
 	if err != nil {
 		http.Error(w, "Could not create key:\n"+err.Error(), http.StatusSeeOther)
 		s.Log("Could not create key: " + err.Error())
@@ -73,27 +88,27 @@ func (s *server) addKey(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) getKey(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getKey(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) getAllKeys(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getAllKeys(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) updateKey(w http.ResponseWriter, r *http.Request) {
+func (s *Server) updateKey(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) deleteKey(w http.ResponseWriter, r *http.Request) {
+func (s *Server) deleteKey(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) unlockDoor(w http.ResponseWriter, r *http.Request) {
+func (s *Server) unlockDoor(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) unlockDoorTemp(w http.ResponseWriter, r *http.Request) {
+func (s *Server) unlockDoorTemp(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	timeStr := vars["time"]
 	time, err := strconv.Atoi(timeStr)
@@ -106,11 +121,11 @@ func (s *server) unlockDoorTemp(w http.ResponseWriter, r *http.Request) {
 	lock.UnlockTemp(time)
 }
 
-func (s *server) lockDoor(w http.ResponseWriter, r *http.Request) {
+func (s *Server) lockDoor(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *server) adminOnly(next http.HandlerFunc) http.HandlerFunc {
+func (s *Server) adminOnly(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TO DO: IMPLEMENT PROPER AUTHORISATION CHECKING
 		if 0 != 0 { // CHANGE THIS

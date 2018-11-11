@@ -14,13 +14,13 @@ type Key struct {
 	name        string
 	description string
 	created     string
-	expires     string
+	expires     time.Time
 	singleUse   bool
 	uses        int
 	lastUsed    string
 }
 
-func createKey(n string, d string, exp string, single bool) (Key, error) {
+func createKey(n string, d string, exp time.Time, single bool) (Key, error) {
 	// Auto-generate a unique ID
 	id, err := uuid.NewUUID()
 	if err != nil {
@@ -35,14 +35,14 @@ func createKey(n string, d string, exp string, single bool) (Key, error) {
 		exp,
 		single,
 		0,
-		created,
+		"never",
 	}
 
 	// Return nil if no error has been encountered
 	return key, nil
 }
 
-func (s *server) writeKey(k *Key) error {
+func (s *Server) writeKey(k *Key) error {
 	id := k.id.String()
 	name := k.name
 	description := k.description
@@ -59,7 +59,7 @@ func (s *server) writeKey(k *Key) error {
 	}
 
 	// Parse everything into a string
-	parsed := id + "\n" + name + "\n" + description + "\n" + created + "\n" + expires + "\n" + singleUse + "\n" +
+	parsed := id + "\n" + name + "\n" + description + "\n" + created + "\n" + expires.Format("") + "\n" + singleUse + "\n" +
 		uses + "\n" + lastUsed + "\n"
 
 	// Write to the file

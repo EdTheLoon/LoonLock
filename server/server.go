@@ -12,7 +12,7 @@ import (
 // assets			The filesystem location of static assets
 // router			The HTTP router to be used
 // fs				The FileServer for static files
-type server struct {
+type Server struct {
 	keyDir string
 	assets string
 	router *mux.Router
@@ -21,7 +21,7 @@ type server struct {
 }
 
 // NewServer creates a new server
-func NewServer(keydir string, assets string, log string) server {
+func NewServer(keydir string, assets string, log string) Server {
 	// Create/open the log file
 	f, err := os.OpenFile(log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0640)
 	if err != nil {
@@ -29,7 +29,7 @@ func NewServer(keydir string, assets string, log string) server {
 	}
 
 	// Create the server struct
-	s := server{
+	s := Server{
 		keydir,
 		assets,
 		mux.NewRouter(),
@@ -49,6 +49,7 @@ func NewServer(keydir string, assets string, log string) server {
 	return s
 }
 
-func (s *server) GetRouter() *mux.Router {
+// GetRouter returns the mux Router in use
+func (s *Server) GetRouter() *mux.Router {
 	return s.router
 }
