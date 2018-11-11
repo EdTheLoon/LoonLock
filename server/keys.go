@@ -22,7 +22,7 @@ type Key struct {
 
 func createKey(n string, d string, exp string, single bool) (Key, error) {
 	// Auto-generate a unique ID
-	id, err := uuid.NewUUID()
+	id, err := uuid.NewRandom()
 	if err != nil {
 		return Key{}, err
 	}
