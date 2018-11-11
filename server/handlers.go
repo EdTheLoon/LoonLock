@@ -50,14 +50,16 @@ func (s *Server) addKey(w http.ResponseWriter, r *http.Request) {
 
 	// Parse expiry input
 	var err error
-	expiresFormatted := time.Date(2150, 12, 31, 23, 59, 59, 999, time.Local)
+	var expiresTime time.Time
+	var expiresStr string
 	if expires != "" {
-		expiresFormatted, err = time.Parse("", expires)
-		if err != nil {
-			http.Error(w, "Could not parse the time into the correct format:\n"+err.Error(), http.StatusSeeOther)
-			s.Log("Could not parse the time:\n" + err.Error())
-			return
-		}
+		expiresTime, err = StrToTime(expires)
+		expiresStr = TimeToStr(expiresTime)
+	} else {
+		expiresStr = "Jan, 01 2150"
+	}
+	if err != nil {
+		http.Error(w, "Could not parse date:\n"+err.Error(), http.StatusSeeOther)
 	}
 
 	// Parse single use
@@ -68,7 +70,7 @@ func (s *Server) addKey(w http.ResponseWriter, r *http.Request) {
 
 	s.Log("Creating key...")
 	// Create the key using the provided data
-	key, err := createKey(name, description, expiresFormatted, singleUse)
+	key, err := createKey(name, description, expiresStr, singleUse)
 	if err != nil {
 		http.Error(w, "Could not create key:\n"+err.Error(), http.StatusSeeOther)
 		s.Log("Could not create key: " + err.Error())
