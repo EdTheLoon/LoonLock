@@ -14,7 +14,6 @@ func (s *Server) routes() {
 
 	// Handles logging in or out
 	s.router.HandleFunc("/login", s.loginHandler)
-	s.router.HandleFunc("/login/{redirect}", s.loginHandler)
 
 	// Admin page handler
 	s.router.HandleFunc("/admin", s.adminOnly(s.admin))
