@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"html/template"
 	"loonlock/lock"
 	"net/http"
 	"strconv"
@@ -26,24 +27,33 @@ func (s *Server) viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
-	s.Log("Received 'login' form")
-	// Read the data submitted through the form
-	r.ParseForm()
+	if r.Method == "POST" {
+		s.Log("Received 'login' form")
+		// Read the data submitted through the form
+		r.ParseForm()
 
-	// DEBUG CODE - Comment out when not needed
-	// for _k, _v := range r.Form {
-	// 	fmt.Printf("%s = %s\n", _k, _v)
-	// }
+		// DEBUG CODE - Comment out when not needed
+		// for _k, _v := range r.Form {
+		// 	fmt.Printf("%s = %s\n", _k, _v)
+		// }
 
-	user := r.FormValue("username")
-	passwd := r.FormValue("password")
+		user := r.FormValue("username")
+		passwd := r.FormValue("password")
 
-	if user == "admin" && passwd == "P@55w0rd" {
-		s.setSessionCookie(w, r)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		if user == "admin" && passwd == "P@55w0rd" {
+			s.setSessionCookie(w, r)
+			http.Redirect(w, r, "/", http.StatusFound)
+		} else {
+			http.Error(w, "Incorrect login details", http.StatusForbidden)
+			return
+		}
 	} else {
-		http.Error(w, "Incorrect login details", http.StatusForbidden)
-		return
+		t, err := template.ParseFiles("./assets/html/login.html")
+		if err != nil {
+			http.Error(w, "An internal server error occured", http.StatusInternalServerError)
+			return
+		}
+		t.Execute(w, nil)
 	}
 }
 
@@ -77,7 +87,7 @@ func (s *Server) addKey(w http.ResponseWriter, r *http.Request) {
 		expiresStr = "Jan, 01 2150"
 	}
 	if err != nil {
-		http.Error(w, "Could not parse date:\n"+err.Error(), http.StatusSeeOther)
+		http.Error(w, "Could not parse date:\n"+err.Error(), http.StatusInternalServerError)
 		s.Log("Could not parse date: " + err.Error())
 		return
 	}
@@ -92,7 +102,7 @@ func (s *Server) addKey(w http.ResponseWriter, r *http.Request) {
 	// Create the key using the provided data
 	key, err := createKey(name, description, expiresStr, singleUse)
 	if err != nil {
-		http.Error(w, "Could not create key:\n"+err.Error(), http.StatusSeeOther)
+		http.Error(w, "Could not create key:\n"+err.Error(), http.StatusUnauthorized)
 		s.Log("Could not create key: " + err.Error())
 		return
 	}
@@ -101,7 +111,7 @@ func (s *Server) addKey(w http.ResponseWriter, r *http.Request) {
 	s.Log("Writing key...")
 	err = s.writeKey(&key)
 	if err != nil {
-		http.Error(w, "Could not write key:\n"+err.Error(), http.StatusSeeOther)
+		http.Error(w, "Could not write key:\n"+err.Error(), http.StatusInternalServerError)
 		s.Log("Could not write key: " + err.Error())
 		return
 	}
@@ -154,7 +164,7 @@ func (s *Server) adminOnly(next http.HandlerFunc) http.HandlerFunc {
 			if err != nil {
 				s.Log(err.Error())
 			}
-			http.Redirect(w, r, "/web/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 		next.ServeHTTP(w, r)
