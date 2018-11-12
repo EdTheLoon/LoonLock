@@ -26,7 +26,25 @@ func (s *Server) viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
+	s.Log("Received 'login' form")
+	// Read the data submitted through the form
+	r.ParseForm()
 
+	// DEBUG CODE - Comment out when not needed
+	// for _k, _v := range r.Form {
+	// 	fmt.Printf("%s = %s\n", _k, _v)
+	// }
+
+	user := r.FormValue("username")
+	passwd := r.FormValue("password")
+
+	if user == "admin" && passwd == "P@55w0rd" {
+		s.setSessionCookie(w, r)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else {
+		http.Error(w, "Incorrect login details", http.StatusForbidden)
+		return
+	}
 }
 
 func (s *Server) admin(w http.ResponseWriter, r *http.Request) {
@@ -60,6 +78,8 @@ func (s *Server) addKey(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		http.Error(w, "Could not parse date:\n"+err.Error(), http.StatusSeeOther)
+		s.Log("Could not parse date: " + err.Error())
+		return
 	}
 
 	// Parse single use
@@ -129,9 +149,12 @@ func (s *Server) lockDoor(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) adminOnly(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TO DO: IMPLEMENT PROPER AUTHORISATION CHECKING
-		if 0 != 0 { // CHANGE THIS
-			http.Error(w, "Forbidden", http.StatusForbidden)
+		err := validSession(r)
+		if err != nil {
+			if err != nil {
+				s.Log(err.Error())
+			}
+			http.Redirect(w, r, "/web/login", http.StatusSeeOther)
 			return
 		}
 		next.ServeHTTP(w, r)

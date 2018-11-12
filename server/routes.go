@@ -9,7 +9,8 @@ func (s *Server) routes() {
 	// Web Interface handling
 	s.router.HandleFunc("/", s.viewHandler)
 	s.router.HandleFunc("/web/", s.viewHandler)
-	s.router.HandleFunc("/web/{page}", s.viewHandler)                       // Handles showing all front end HTML pages
+	s.router.HandleFunc("/web/{page}", s.viewHandler)
+	s.router.HandleFunc("/web/admin/{page}", s.adminOnly(s.viewHandler))    // Handles showing all front end HTML pages
 	s.router.HandleFunc("/keys/{id}", s.adminOnly(s.getKey)).Methods("GET") // modifykey.html
 
 	// Handles logging in or out
