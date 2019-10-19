@@ -3,10 +3,11 @@ package server
 import (
 	"fmt"
 	"html/template"
-	"loonlock/lock"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/EdTheLoon/LoonLock/lock"
 
 	"github.com/gorilla/mux"
 )

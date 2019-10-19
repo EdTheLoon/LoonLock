@@ -1,8 +1,9 @@
 package main
 
 import (
-	"loonlock/server"
 	"net/http"
+
+	"github.com/EdTheLoon/LoonLock/server"
 )
 
 func main() {
