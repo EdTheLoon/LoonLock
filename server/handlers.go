@@ -19,7 +19,7 @@ func (s *Server) viewHandler(w http.ResponseWriter, r *http.Request) {
 		load = "home.html"
 	}
 	p, err := s.loadPage(load)
-	s.Log("Loading page: ./assets/" + load)
+	s.Log("Loading page: " + s.assets + "/hmtl/" + load)
 	if err != nil {
 		http.Error(w, "Page not found", http.StatusNotFound)
 		return
@@ -41,6 +41,8 @@ func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 		user := r.FormValue("username")
 		passwd := r.FormValue("password")
 
+		// TO DO: In the future get the intended username and password from a config file.
+		// Store the password in the file as a hash.
 		if user == "admin" && passwd == "P@55w0rd" {
 			s.setSessionCookie(w, r)
 			http.Redirect(w, r, "/", http.StatusFound)
@@ -49,7 +51,7 @@ func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		t, err := template.ParseFiles("./assets/html/login.html")
+		t, err := template.ParseFiles(s.assets + "html/login.html")
 		if err != nil {
 			http.Error(w, "An internal server error occured", http.StatusInternalServerError)
 			return
@@ -164,7 +166,6 @@ func (s *Server) adminOnly(next http.HandlerFunc) http.HandlerFunc {
 		if err != nil {
 			s.Log(err.Error())
 		}
-		http.Redirect(w, r, "/login", http.StatusFound)
 		next.ServeHTTP(w, r)
 	}
 }
