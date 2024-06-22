@@ -162,12 +162,9 @@ func (s *Server) adminOnly(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := validSession(r)
 		if err != nil {
-			if err != nil {
-				s.Log(err.Error())
-			}
-			http.Redirect(w, r, "/login", http.StatusFound)
-			return
+			s.Log(err.Error())
 		}
+		http.Redirect(w, r, "/login", http.StatusFound)
 		next.ServeHTTP(w, r)
 	}
 }
