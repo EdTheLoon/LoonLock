@@ -1,6 +1,8 @@
 package server
 
 import (
+	"bufio"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -16,8 +18,13 @@ type Key struct {
 	created     string
 	expires     string
 	singleUse   bool
-	uses        int
+	uses        uint64
 	lastUsed    string
+}
+
+func (k *Key) getString() string {
+	return fmt.Sprintf("ID: %s\nName: %s\nDescription: %s\nCreated: %s\nExpires: %s\nSingle Use: %v\nUses: %v\nLast Used: %s",
+		k.id.String(), k.name, k.description, k.created, k.expires, k.singleUse, k.uses, k.lastUsed)
 }
 
 func createKey(n string, d string, exp string, single bool) (Key, error) {
@@ -42,6 +49,80 @@ func createKey(n string, d string, exp string, single bool) (Key, error) {
 	return key, nil
 }
 
+func (s *Server) readKeyFromFile(id string) (Key, error) {
+	f, err := os.OpenFile(s.keyDir+id, os.O_RDONLY, 0640)
+	if err != nil {
+		return Key{}, err
+	}
+
+	defer f.Close()
+
+	// Start reading strings separated by newlines
+	reader := bufio.NewReader(f)
+	readstr, err := reader.ReadString('\n')
+	if err != nil {
+		return Key{}, err
+	}
+	kid, err := uuid.Parse(readstr) // Parse the string into a UUID
+	if err != nil {
+		return Key{}, err
+	}
+
+	n, err := reader.ReadString('\n') // Read the key name
+	if err != nil {
+		return Key{}, err
+	}
+
+	d, err := reader.ReadString('\n') // Read the key description
+	if err != nil {
+		return Key{}, err
+	}
+
+	created, err := reader.ReadString('\n') // Read the date key was created
+	if err != nil {
+		return Key{}, err
+	}
+
+	exp, err := reader.ReadString('\n') // Read the expiry date
+	if err != nil {
+		return Key{}, err
+	}
+
+	singleStr, err := reader.ReadString('\n') // Read single use
+	if err != nil {
+		return Key{}, err
+	}
+	single, err := strconv.ParseBool(singleStr) // Parse to bool
+	if err != nil {
+		return Key{}, err
+	}
+
+	usesStr, err := reader.ReadString('\n') // Read number of uses
+	if err != nil {
+		return Key{}, err
+	}
+	uses, err := strconv.ParseUint(usesStr, 10, 64) // Parse to int
+	if err != nil {
+		return Key{}, err
+	}
+
+	last, err := reader.ReadString('\n')
+	if err != nil {
+		return Key{}, err
+	}
+
+	return Key{
+		kid,
+		n,
+		d,
+		created,
+		exp,
+		single,
+		uses,
+		last,
+	}, nil
+}
+
 func (s *Server) writeKey(k *Key) error {
 	id := k.id.String()
 	name := k.name
@@ -49,7 +130,7 @@ func (s *Server) writeKey(k *Key) error {
 	created := k.created
 	expires := k.expires
 	singleUse := strconv.FormatBool(k.singleUse)
-	uses := strconv.Itoa(k.uses)
+	uses := strconv.FormatUint(k.uses, 10)
 	lastUsed := k.lastUsed
 
 	// Create the file for working
@@ -57,6 +138,8 @@ func (s *Server) writeKey(k *Key) error {
 	if err != nil {
 		return err
 	}
+
+	defer f.Close()
 
 	// Parse everything into a string
 	parsed := id + "\n" + name + "\n" + description + "\n" + created + "\n" + expires + "\n" + singleUse + "\n" +
