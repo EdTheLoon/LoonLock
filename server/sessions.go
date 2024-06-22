@@ -78,21 +78,21 @@ func validSession(r *http.Request) error {
 	}
 
 	if cValue == "" {
-		return errors.New("Cookie value was nil")
+		return errors.New("cookie value was nil")
 	}
 
 	cookieSessID, err := uuid.Parse(cValue)
 	if err != nil {
-		return errors.New("Cookie value was invalid")
+		return errors.New("cookie value was invalid")
 	}
 
 	for x := range validSessions {
 		if cookieSessID == validSessions[x].ID {
 			if validSessions[x].Expires.Before(time.Now()) {
-				return errors.New("Session expired")
+				return errors.New("session expired")
 			}
 			return nil
 		}
 	}
-	return errors.New("Session was not valid")
+	return errors.New("session was not valid")
 }
