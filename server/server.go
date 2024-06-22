@@ -20,7 +20,9 @@ type Server struct {
 	log    *os.File
 }
 
-// NewServer creates a new server
+// NewServer creates a new server. Pass in the keys directory, assets directory
+// and path to log file.
+// Returns a Server struct.
 func NewServer(keydir string, assets string, log string) Server {
 	// Create/open the log file
 	f, err := os.OpenFile(log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0640)
@@ -49,7 +51,7 @@ func NewServer(keydir string, assets string, log string) Server {
 	return s
 }
 
-// GetRouter returns the mux Router in use
+// GetRouter returns a pointer to the mux Router in use
 func (s *Server) GetRouter() *mux.Router {
 	return s.router
 }
