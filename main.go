@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// Create a new server
-	s := server.NewServer("./.keys/", "./assets", ".log")
+	s := server.NewServer("./.keys/", "./assets/", "./.log")
 	defer s.CloseLog()
 
 	// Start the web server and listen on port 8081
