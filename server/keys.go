@@ -50,6 +50,7 @@ func createKey(n string, d string, exp string, single bool) (Key, error) {
 }
 
 func (s *Server) readKeyFromFile(id string) (Key, error) {
+	s.Log("Attempting to read key: " + id)
 	f, err := os.OpenFile(s.keyDir+id, os.O_RDONLY, 0640)
 	if err != nil {
 		return Key{}, err
@@ -111,7 +112,7 @@ func (s *Server) readKeyFromFile(id string) (Key, error) {
 		return Key{}, err
 	}
 
-	return Key{
+	k := Key{
 		kid,
 		n,
 		d,
@@ -120,10 +121,13 @@ func (s *Server) readKeyFromFile(id string) (Key, error) {
 		single,
 		uses,
 		last,
-	}, nil
+	}
+	s.Log("Read key: " + k.getString())
+	return k, nil
 }
 
 func (s *Server) writeKey(k *Key) error {
+	s.Log("Attempting to write key:\n" + k.getString())
 	id := k.id.String()
 	name := k.name
 	description := k.description

@@ -157,7 +157,7 @@ func (s *Server) unlockDoorTemp(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("Unlock for '" + timeStr + "' seconds")
+	s.Log("Unlock for '" + timeStr + "' seconds")
 	lock.UnlockTemp(time)
 }
 
