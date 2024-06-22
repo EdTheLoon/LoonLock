@@ -124,7 +124,12 @@ func (s *Server) addKey(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) getKey(w http.ResponseWriter, r *http.Request) {
-
+	id := mux.Vars(r)["id"]
+	k, err := s.readKeyFromFile(id)
+	if err != nil {
+		panic(err)
+	}
+	s.Log("Key ID: " + k.getString())
 }
 
 func (s *Server) getAllKeys(w http.ResponseWriter, r *http.Request) {
