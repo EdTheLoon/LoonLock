@@ -1,10 +1,10 @@
 package server
 
 import (
-	"io/ioutil"
+	"os"
 )
 
 func (s *Server) loadPage(p string) ([]byte, error) {
-	page, err := ioutil.ReadFile("./assets/html/" + p)
+	page, err := os.ReadFile(s.assets + p)
 	return page, err
 }
