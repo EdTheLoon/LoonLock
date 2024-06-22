@@ -1,0 +1,6 @@
+github.com/EdTheLoon/LoonLock v0.0.0-20191019051733-b3752d61aded h1:97phyNc1l2/hs4Xi9MAkd/BVNtxvDCvRlrKSW6uE0sQ=
+github.com/EdTheLoon/LoonLock v0.0.0-20191019051733-b3752d61aded/go.mod h1:HpsImeKyM8gkq7EtsVADBKxxepwEgsrbFzvRC5fc94U=
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
+github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
